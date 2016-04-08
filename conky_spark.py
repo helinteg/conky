@@ -93,7 +93,7 @@ class Job:
 
     def get_stat(self):
         p = int((self.num_completed_tasks/self.num_tasks) * 100)
-        name = self.name[0:self.name.find('/')] + self.name[self.name.rfind('/') + 1:-1]
+        name = self.name[:self.name.find('/')] + self.name[self.name.rfind('/') + 1:]
         return '    ' + str(p) + '% : ' + str(self.num_completed_tasks) + '/' + str(self.num_tasks) + ' : ' + str(self.id) + '\n' + '    ' + name
 
 
