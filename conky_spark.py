@@ -22,7 +22,7 @@ class Node:
         sc_stats = str()
         for sc in self.spark_contexts:
             sc_stats += sc.get_stat() + '\n'
-        return 'node: ' + self.name + '\n' + sc_stats
+        return 'node: ' + self.name + '\n' + sc_stats[:-1]
 
     def request_spark_contexts(self):
         keep_looking = True
@@ -54,7 +54,7 @@ class SparkContext:
         apps_stat = str()
         for app in self.apps:
             apps_stat += app.get_stat() + '\n'
-        return apps_stat
+        return apps_stat[:-1]
 
 
 class App:
@@ -81,7 +81,7 @@ class App:
         jobs_stats = str()
         for job in self.jobs:
             jobs_stats += job.get_stat() + '\n'
-        return '  ' + 'app: ' + self.name + ':\n' + jobs_stats
+        return '  ' + 'app: ' + self.name + ':\n' + jobs_stats[:-1]
 
 
 class Job:
