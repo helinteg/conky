@@ -93,8 +93,13 @@ class Job:
 
     def get_stat(self):
         p = int((self.num_completed_tasks/self.num_tasks) * 100)
-        name = self.name[:self.name.find('/')] + self.name[self.name.rfind('/') + 1:]
-        return '    ' + str(p) + '% : ' + str(self.num_completed_tasks) + '/' + str(self.num_tasks) + ' : ' + str(self.id) + '\n' + '    ' + name
+        f = self.name.find('/')
+        l = self.name.rfind('/')
+        name = self.name if f == l else self.name[:f] + self.name[l + 1:]
+        bar = '    ' + '${execbar ' + str(p) + '}'
+        text = '    ' + str(p) + '% : '
+        text += str(self.num_completed_tasks) + '/' + str(self.num_tasks) + ' : ' + str(self.id) + '\n' + '    ' + name
+        return bar + '\n' + text
 
 
 if __name__ == "__main__":
