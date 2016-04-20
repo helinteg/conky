@@ -96,7 +96,7 @@ class Job:
         f = self.name.find('/')
         l = self.name.rfind('/')
         name = self.name if f == l else self.name[:f] + self.name[l + 1:]
-        bar = '    ' + '${execbar ' + str(p) + '}'
+        bar = '    ' + '${execbar echo ' + str(p) + '}'
         text = '    ' + str(p) + '% : '
         text += str(self.num_completed_tasks) + '/' + str(self.num_tasks) + ' : ' + str(self.id) + '\n' + '    ' + name
         return bar + '\n' + text
