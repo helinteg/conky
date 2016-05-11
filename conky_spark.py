@@ -64,7 +64,7 @@ class App:
         self.id = id
         self.name = name
         self.jobs = []
-        self.request_jobs()
+        self.request_stages()
 
     def request_jobs(self):
         http_addr = 'http://' + self.ip + ':' + str(self.port) + '/api/v1/applications/' + self.id + '/jobs'
@@ -74,6 +74,17 @@ class App:
                 jobs_text = json.loads(text.decode('utf-8'))
                 for job in jobs_text:
                     self.jobs.append(Job(job['jobId'], job['name'], job['numTasks'], job['numCompletedTasks']))
+        except Exception:
+            pass
+
+    def request_stages(self):
+        http_addr = 'http://' + self.ip + ':' + str(self.port) + '/api/v1/applications/' + self.id + '/stages'
+        try:
+            with request.urlopen(http_addr) as f:
+                text = f.read()
+                jobs_text = json.loads(text.decode('utf-8'))
+                for job in jobs_text:
+                    self.jobs.append(Job(job['stageId'], job['name'], (job['numCompleteTasks'] + job['numActiveTasks']  + job['numFailedTasks']), job['numCompleteTasks']))
         except Exception:
             pass
 
@@ -92,7 +103,7 @@ class Job:
         self.num_completed_tasks = num_completed_tasks
 
     def get_stat(self):
-        p = int((self.num_completed_tasks/self.num_tasks) * 100)
+        p = int((self.num_completed_tasks/self.num_tasks) * 100) if self.num_tasks > 0 else 0
         f = self.name.find('/')
         l = self.name.rfind('/')
         name = self.name if f == l else self.name[:f] + self.name[l + 1:]
