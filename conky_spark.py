@@ -64,16 +64,24 @@ class App:
         self.id = id
         self.name = name
         self.jobs = []
+        self.stages = dict()
         self.request_stages()
+        self.request_jobs()
 
     def request_jobs(self):
         http_addr = 'http://' + self.ip + ':' + str(self.port) + '/api/v1/applications/' + self.id + '/jobs'
+        active_stages = set(self.stages.keys())
         try:
             with request.urlopen(http_addr) as f:
                 text = f.read()
                 jobs_text = json.loads(text.decode('utf-8'))
                 for job in jobs_text:
-                    self.jobs.append(Job(job['jobId'], job['name'], job['numTasks'], job['numCompletedTasks']))
+                    stage_string = str(job["numCompletedStages"]) + "/" + str(len(job["stageIds"]))
+                    active_stages_for_job = set(job["stageIds"]) & active_stages
+                    for stage_id in active_stages_for_job:
+                        stage_string += " " + self.stages[int(stage_id)]
+                    desc = stage_string if len(active_stages_for_job) > 0 else job["name"]
+                    self.jobs.append(Job(job['jobId'], desc, job['numTasks'], job['numCompletedTasks']))
         except Exception:
             pass
 
@@ -82,9 +90,10 @@ class App:
         try:
             with request.urlopen(http_addr) as f:
                 text = f.read()
-                jobs_text = json.loads(text.decode('utf-8'))
-                for job in jobs_text:
-                    self.jobs.append(Job(job['stageId'], job['name'], (job['numCompleteTasks'] + job['numActiveTasks']  + job['numFailedTasks']), job['numCompleteTasks']))
+                stages_text = json.loads(text.decode('utf-8'))
+                for stage in stages_text:
+                    if stage['status'] == "ACTIVE":
+                        self.stages[int(stage['stageId'])] = stage['name']
         except Exception:
             pass
 
