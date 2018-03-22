@@ -93,6 +93,8 @@ ${color1}MEM usage	    ${goto 120} MEM                  ${goto 170} CPU%
  ${memgraph MEM 20,230 color1 color2 -t }${voffset 5}${alignr}${font :style=Bold:pixelsize=14}${memperc MEM}%${font}
  ${color1}RAM: ${color2}$mem/$memmax${alignr}${color1} Swap:${color2} $swap/$swapmax
 
+${color1}HDD Temp:
+${color2}${execi 5 hddtempconky.sh;}
 
 ${color1}File Systems:
  ${execpi 60 df -h --output=source,target | grep '^/dev/' | cut --characters=6- | sed 's/^/\$\{template5 /;s/$/\}/' | sort}
@@ -103,5 +105,5 @@ ${color1}File Systems:
 #${color2}${execi 100 dropbox-cli status}
 #
 ###### Spark
-#${execpi 10 ~/bin/conky_spark.py --ip=localhost --name='local'}
+#${execpi 10 ~/bin/conky_spark.py --ip=`conky_say_first_spark_ip.sh` --name=`conky_say_first_spark_name.sh`}
 #${voffset 100}
